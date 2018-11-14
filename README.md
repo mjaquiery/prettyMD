@@ -12,9 +12,9 @@ if(!require(prettyMD)) {
 
 ## Usage
 
-```rmd
+`````rmd
 ```{r results = 'asis')
   data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
   md.ttest(data$x, data$y, c('*Mean|Control*', '*Mean|Treatment*'), paired = T)
 ```
-And then close the chunk with backticks :)
+`````
