@@ -58,7 +58,7 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F, ...
 #'
 #' @export
 prop2str <- function(...) {
-  return(num2str(num = proportion, precision = precision, isProportion = T, truncateZeros = truncateZeros))
+  return(num2str(..., isProportion = T))
 }
 
 #' Print the mean and CIs of a vector
