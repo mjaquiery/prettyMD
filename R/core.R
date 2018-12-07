@@ -19,7 +19,7 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F, ...
                                            precision = precision,
                                            isProportion = isProportion,
                                            truncateZeros = truncateZeros)))
-  if(is.nan(num) | is.na(num))
+  if(!is.numeric(num) | is.nan(num) | is.na(num))
     return(as.character(num))
   num <- round(num, precision)
   # if we hit scientific notation then give up!
@@ -113,6 +113,6 @@ md.mean <- function(vector, label = '*M*', decimals = 2, na.rm = F, conf.int = .
 #'
 #' @export
 md.BF <- function(bayesTest, ...) {
-  out <- paste(name, '=', num2str(exp(bayesTest@bayesFactor$bf)), ...)
+  out <- paste('BF =', num2str(exp(bayesTest@bayesFactor$bf)), ...)
   return(out)
 }

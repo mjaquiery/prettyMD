@@ -38,7 +38,7 @@ md.t <- function(result, decimals = 2, decimals.p = NULL) {
 #' data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
 #' md.ttest(data$x, data$y, c('*Mean|Control*', '*Mean|Treatment*'), paired = T)
 #'
-#' @return formatted string like t(df) = t.value, p < .05, d = 0.23, BF = 4.50; M1 = 3.05 [1.23, 4.55], M2 = 5.12 [4.20, 5.99]
+#' @return formatted string like t(df) = 3.68, p < .05, d = 0.23, BF = 4.50; M1 = 3.05 [1.23, 4.55], M2 = 5.12 [4.20, 5.99]
 #'
 #' @export
 md.ttest <- function (x, y = NULL, labels = NULL, mu = NULL, paired = F, ...) {
@@ -61,19 +61,29 @@ md.ttest <- function (x, y = NULL, labels = NULL, mu = NULL, paired = F, ...) {
                  paste(', *d* =', num2str(lsr::cohensD(x, mu = y), ...)),
                  NULL)
     .bf <- ifelse(pkgs[['BayesFactor']],
-                  paste(',', md.BF(BayesFactor::ttestBF(x, mu = y, paired = paired), ...)),
+                  paste(',', md.BF(BayesFactor::ttestBF(x, mu = y, paired = paired))),
                   NULL)
     means <- paste0('; ', md.mean(x, label = labels[1], ...), ', mu = ', y)
   } else {
-    .t <- t.test(x, y, paired = paired)
+    .t <- md.t(t.test(x, y, paired = paired))
     .d <- ifelse(pkgs[['lsr']],
                  paste(', *d* =', num2str(lsr::cohensD(x, y), ...)),
                  NULL)
     .bf <- ifelse(pkgs[['BayesFactor']],
-                  paste(',', md.BF(BayesFactor::ttestBF(x, y, paired = paired), ...)),
+                  paste(',', md.BF(BayesFactor::ttestBF(x, y, paired = paired))),
                   NULL)
     means <- paste0('; ', md.mean(x, label = labels[1], ...), ', ',
                     md.mean(y, label = labels[2], ...))
   }
-  paste0(.t, .d, .bf, means)
+  out <- paste0(.t, .d, .bf, means)
+}
+
+#' Return only the BayesFactor and means part of a t-test
+#' @inheritDotParams md.ttest
+#' @export
+md.ttestBF <- function(...) {
+  out <- md.ttest(...)
+  # string slicing
+  out <- sub('^.*, BF = ', 'BF = ', out)
+  return(out)
 }

@@ -2,11 +2,12 @@ Package: prettyMD
 Type: Package
 Title: Format Test Outputs with Markdown
 Version: 0.1.0
-Author: Matt Jaquiery
-Maintainer: Matt Jaquiery <matt.jaquiery@psy.ox.ac.uk>
+Authors@R: person("Matt", "Jaquiery", email = "matt.jaquiery@psy.ox.ac.uk",
+  role = c("aut", "cre"))
 Description: Generate neatly formatted test outputs for common psychology tests with APA-style italics, number formatting, etc.
 License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 Suggests: BayesFactor, lsr
+Date: 2018-12-05

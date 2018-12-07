@@ -30,7 +30,7 @@ md.ttest(x, y = NULL, labels = NULL, mu = NULL, paired = F, ...)
 }}
 }
 \value{
-formatted string like t(df) = t.value, p < .05, d = 0.23, BF = 4.50; M1 = 3.05 [1.23, 4.55], M2 = 5.12 [4.20, 5.99]
+formatted string like t(df) = 3.68, p < .05, d = 0.23, BF = 4.50; M1 = 3.05 [1.23, 4.55], M2 = 5.12 [4.20, 5.99]
 }
 \description{
 Run a t-test and return neatly formatted output
