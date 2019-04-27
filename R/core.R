@@ -14,7 +14,7 @@
 #'
 #' @export
 num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F, ...) {
-  if (grep("tibble", sessionInfo()))
+  if (length(grep("tibble", sessionInfo())))
     if (tibble::is.tibble(num))
       return(num2str.tibble(num, precision, isProportion, truncateZeros, ...))
   if (length(num) > 1)
