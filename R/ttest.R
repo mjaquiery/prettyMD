@@ -63,7 +63,7 @@ md.ttest <- function (x, y = NULL, labels = NULL, mu = NULL, paired = F, ...) {
     .bf <- ifelse(pkgs[['BayesFactor']],
                   paste(',', md.BF(BayesFactor::ttestBF(x, mu = y, paired = paired))),
                   NULL)
-    means <- paste0('; ', md.mean(x, label = labels[1], ...), ', mu = ', y)
+    means <- paste0('; ', md.mean(x, label = labels[1], ...), ', $\\mu$ = ', y)
   } else {
     .t <- md.t(t.test(x, y, paired = paired))
     .d <- ifelse(pkgs[['lsr']],

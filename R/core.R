@@ -14,36 +14,39 @@
 #'
 #' @export
 num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F, ...) {
-  if(length(num) > 1)
+  if (grep("tibble", sessionInfo()))
+    if (tibble::is.tibble(num))
+      return(num2str.tibble(num, precision, isProportion, truncateZeros, ...))
+  if (length(num) > 1)
     return(sapply(num, function(x) num2str(num = x,
                                            precision = precision,
                                            isProportion = isProportion,
                                            truncateZeros = truncateZeros)))
-  if(!is.numeric(num) | is.nan(num) | is.na(num))
+  if (!is.numeric(num) | is.nan(num) | is.na(num))
     return(as.character(num))
   num <- round(num, precision)
   # if we hit scientific notation then give up!
-  if(grepl('e', num, fixed = T))
+  if (grepl('e', num, fixed = T))
     return(as.character(num))
   # leading 0 stripping
-  if(abs(num) < 1 & isProportion)
-    if(num == 0)
+  if (abs(num) < 1 & isProportion)
+    if (num == 0)
       x <- '.'
   else
     x <- sub('^-?0\\.', ifelse(num < 0, '-.', '.'), as.character(num))
   else
     x <- as.character(num)
-  if(truncateZeros)
+  if (truncateZeros)
     return(x)
   # string manipulation to pad 0s
   dot <- regexpr('.', x, fixed = T)
-  if(dot == -1) {
+  if (dot == -1) {
     x <- paste0(x,'.')
     dot <- regexpr('.', x, fixed = T)
   }
-  right <- substr(x, dot, dot+precision) # portion of x after 0
-  right <- paste0(right, strrep('0',precision-nchar(right)+1))
-  x <- paste0(substr(x, 1, dot-1), right)
+  right <- substr(x, dot, dot + precision) # portion of x after 0
+  right <- paste0(right, strrep('0',precision - nchar(right) + 1))
+  x <- paste0(substr(x, 1, dot - 1), right)
   return(x)
 }
 
@@ -59,6 +62,40 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F, ...
 #' @export
 prop2str <- function(...) {
   return(num2str(..., isProportion = T))
+}
+
+#' Format entries in a tibble using num2str
+#' @inheritDotParams num2str
+#'
+#' @description
+#' Parameters for \code{num2str} can be specified as vectors indicating the
+#' columns to which values apply, with NA interpreted as using the default value
+#'
+#' @examples
+#' x <- tibble(chr = "character", int = 1:10, prop = runif(10), tProp = runif(10))
+#' num2str.tibble(x, isProportion = c(NA, NA, T, T), truncateZeros = c(F, F, F, T))
+#'
+#' @export
+num2str.tibble <- function(tbl, precision = 2, isProportion = F, truncateZeros = F, ...) {
+  if (length(precision) == 1)
+    precision <- rep(precision, ncol(tbl))
+  if (length(isProportion) == 1)
+    isProportion <- rep(isProportion, ncol(tbl))
+  if (length(truncateZeros) == 1)
+    truncateZeros <- rep(truncateZeros, ncol(tbl))
+
+  precision[is.na(precision)] <- 2
+  isProportion[is.na(isProportion)] <- F
+  truncateZeros[is.na(truncateZeros)] <- F
+
+  for (i in 1:ncol(tbl)) {
+    tbl[, i] <- num2str(tbl[[i]],
+                        precision = precision[i],
+                        isProportion = isProportion[i],
+                        truncateZeros = truncateZeros[i])
+  }
+
+  tibble::as.tibble(tbl)
 }
 
 #' Print the mean and CIs of a vector
