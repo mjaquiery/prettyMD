@@ -21,6 +21,7 @@ Parameters for \code{num2str} can be specified as vectors indicating the
 columns to which values apply, with NA interpreted as using the default value
 }
 \examples{
+library(tibble)
 x <- tibble(chr = "character", int = 1:10, prop = runif(10), tProp = runif(10))
 num2str.tibble(x, isProportion = c(NA, NA, T, T), truncateZeros = c(F, F, F, T))
 

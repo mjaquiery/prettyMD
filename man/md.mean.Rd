@@ -31,6 +31,6 @@ Print the mean and CIs of a vector
 \examples{
 md.mean(rnorm(1000), label = '*M*|random')
 md.mean(rnorm(1000), label = '*M*|random', conf.int = NA) # no longer needs lsr package
-md.mean(runif(1000), label = 'Mean probability', isProportion = T, showRange = T)
+md.mean(runif(1000), label = 'Mean probability', isProportion = TRUE, showRange = TRUE)
 
 }

@@ -19,6 +19,6 @@ Appropriately formatted t-test output
 }
 \examples{
 data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
-md.t(t.test(data$x, data$y, paired = T), decimals = 3)
+md.t(t.test(data$x, data$y, paired = TRUE), decimals = 3)
 
 }

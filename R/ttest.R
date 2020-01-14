@@ -9,16 +9,16 @@
 #'
 #' @examples
 #' data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
-#' md.t(t.test(data$x, data$y, paired = T), decimals = 3)
+#' md.t(t.test(data$x, data$y, paired = TRUE), decimals = 3)
 #'
 #' @export
 md.t <- function(result, decimals = 2, decimals.p = NULL) {
-  if(is.null(decimals.p))
+  if (is.null(decimals.p))
     decimals.p <- decimals + 1
   df <- num2str(result$parameter, decimals, truncateZeros = T)
   stat <- num2str(result$statistic, decimals)
   p <- ifelse(result$p.value < 10^-decimals.p,
-              paste0('< .', strrep('0', decimals.p-1), '1'),
+              paste0('< .', strrep('0', decimals.p - 1), '1'),
               paste0(' = ', num2str(result$p.value, decimals.p, isProportion = T)))
   out <- paste0('*t*(', df, ') = ', stat,
                 ', *p* ', p)
@@ -36,25 +36,25 @@ md.t <- function(result, decimals = 2, decimals.p = NULL) {
 #'
 #' @examples
 #' data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
-#' md.ttest(data$x, data$y, c('*Mean|Control*', '*Mean|Treatment*'), paired = T)
+#' md.ttest(data$x, data$y, c('*Mean|Control*', '*Mean|Treatment*'), paired = TRUE)
 #'
 #' @return formatted string like t(df) = 3.68, p < .05, d = 0.23, BF = 4.50; M1 = 3.05 [1.23, 4.55], M2 = 5.12 [4.20, 5.99]
 #'
 #' @export
-md.ttest <- function (x, y = NULL, labels = NULL, mu = NULL, paired = F, ...) {
+md.ttest <- function(x, y = NULL, labels = NULL, mu = NULL, paired = F, ...) {
   pkgs <- list()
-  for(pkg in c('lsr', 'BayesFactor'))
+  for (pkg in c('lsr', 'BayesFactor'))
     pkgs[[pkg]] <- requireNamespace(pkg, quietly = T)
 
-  oneSided <- (length(y)==1 | !is.null(mu))
-  if(is.null(labels)) {
-    if(oneSided)
+  oneSided <- (length(y) == 1 | !is.null(mu))
+  if (is.null(labels)) {
+    if (oneSided)
       labels <- '*M*'
     else
       labels <- c('*M1*', '*M2*')
   }
   # support for one-sample tests
-  if(oneSided) {
+  if (oneSided) {
     y = ifelse(is.null(mu), y, mu)
     .t <- md.t(t.test(x, mu = y, paired = paired))
     .d <- ifelse(pkgs[['lsr']],

@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' data.frame(input = c(seq(-10,10),100), output = num2str(exp(c(seq(-10,10),100)), 4))
-#' data.frame(input = c(seq(-10,10),100), output = num2str(exp(c(seq(-10,10),100)), 4, isProportion = T))
+#' data.frame(input = c(seq(-10,10),100), output = num2str(exp(c(seq(-10,10),100)), 4, isProportion = TRUE))
 #'
 #' @export
 num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F, ...) {
@@ -72,6 +72,7 @@ prop2str <- function(...) {
 #' columns to which values apply, with NA interpreted as using the default value
 #'
 #' @examples
+#' library(tibble)
 #' x <- tibble(chr = "character", int = 1:10, prop = runif(10), tProp = runif(10))
 #' num2str.tibble(x, isProportion = c(NA, NA, T, T), truncateZeros = c(F, F, F, T))
 #'
@@ -111,7 +112,7 @@ num2str.tibble <- function(tbl, precision = 2, isProportion = F, truncateZeros =
 #' @examples
 #' md.mean(rnorm(1000), label = '*M*|random')
 #' md.mean(rnorm(1000), label = '*M*|random', conf.int = NA) # no longer needs lsr package
-#' md.mean(runif(1000), label = 'Mean probability', isProportion = T, showRange = T)
+#' md.mean(runif(1000), label = 'Mean probability', isProportion = TRUE, showRange = TRUE)
 #'
 #' @export
 md.mean <- function(vector, label = '*M*', decimals = 2, na.rm = F, conf.int = .95, isProportion = F, showRange = F) {
@@ -145,7 +146,7 @@ md.mean <- function(vector, label = '*M*', decimals = 2, na.rm = F, conf.int = .
 #' \dontrun{
 #'
 #' data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
-#' md.BF(BayesFactor::ttestBF(data$x, data$y, paired = T))
+#' md.BF(BayesFactor::ttestBF(data$x, data$y, paired = TRUE))
 #' }
 #'
 #' @export

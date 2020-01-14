@@ -24,7 +24,7 @@ Extract the Bayes Factor from a Bayesian test
 \dontrun{
 
 data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
-md.BF(BayesFactor::ttestBF(data$x, data$y, paired = T))
+md.BF(BayesFactor::ttestBF(data$x, data$y, paired = TRUE))
 }
 
 }
