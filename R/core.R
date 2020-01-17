@@ -60,8 +60,8 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F, ...
 #' )
 #'
 #' @export
-prop2str <- function(...) {
-  return(num2str(..., isProportion = T))
+prop2str <- function(x, precision = 3, ...) {
+  return(num2str(x, precision, isProportion = T, ...))
 }
 
 #' Format entries in a tibble using num2str
@@ -97,6 +97,30 @@ num2str.tibble <- function(tbl, precision = 2, isProportion = F, truncateZeros =
   }
 
   tibble::as.tibble(tbl)
+}
+
+#' Format s with = if it's not 0, or < otherwise
+#' @param s string to format
+#' @param non_equal_char character to use if x != 0
+#' @param sep separator between the relationship character and s
+#'
+#' @importFrom stringr str_detect
+#'
+#' @example
+#' lteq('.0001')
+#' lteq('.000')
+#'
+#' p <- t.test(rnorm(100, 1))$p.value
+#' p
+#' lteq(p)
+#' # string format first!
+#' lteq(prop2str(p, precision = 3))
+#'
+#' @export
+lteq <- function(s, non_equal_char = '<', sep = ' ') {
+  x <- if (str_detect(s, '[^\\.0]')) '=' else non_equal_char
+
+  paste0(x, sep, s)
 }
 
 #' Print the mean and CIs of a vector

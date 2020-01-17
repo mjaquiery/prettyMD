@@ -4,7 +4,7 @@
 \alias{prop2str}
 \title{Wrapper for \code{num2str(..., isProportion = T)}}
 \usage{
-prop2str(...)
+prop2str(x, precision = 3, ...)
 }
 \arguments{
 \item{...}{Arguments passed on to \code{num2str}
