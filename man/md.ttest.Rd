@@ -2,8 +2,8 @@
 % Please edit documentation in R/ttest.R
 \name{md.ttest}
 \alias{md.ttest}
-\title{Run a t-test and return neatly formatted output
-\code{x}, and either \code{y} or \code{mu} must be specified.}
+\title{Run a t-test and return neatly formatted output \code{x}, and either \code{y}
+or \code{mu} must be specified.}
 \usage{
 md.ttest(x, y = NULL, labels = NULL, mu = NULL, paired = F, ...)
 }
@@ -12,7 +12,8 @@ md.ttest(x, y = NULL, labels = NULL, mu = NULL, paired = F, ...)
 
 \item{y}{additional vector for testing. If singular, functions as \code{mu}}
 
-\item{labels}{vector of labels for x and y}
+\item{labels}{vector of labels for x and y. If NULL, use attr(., 'label'), NA
+to suppress this behaviour.}
 
 \item{mu}{value against which x will be tested}
 
@@ -30,14 +31,16 @@ md.ttest(x, y = NULL, labels = NULL, mu = NULL, paired = F, ...)
 }}
 }
 \value{
-formatted string like t(df) = 3.68, p < .05, d = 0.23, BF = 4.50; M1 = 3.05 [1.23, 4.55], M2 = 5.12 [4.20, 5.99]
+formatted string like t(df) = 3.68, p < .05, d = 0.23, BF = 4.50; M1
+  = 3.05 [1.23, 4.55], M2 = 5.12 [4.20, 5.99]
 }
 \description{
-Run a t-test and return neatly formatted output
-\code{x}, and either \code{y} or \code{mu} must be specified.
+Run a t-test and return neatly formatted output \code{x}, and either \code{y}
+or \code{mu} must be specified.
 }
 \examples{
 data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
-md.ttest(data$x, data$y, c('*Mean|Control*', '*Mean|Treatment*'), paired = TRUE)
+tt <- md.ttest(data$x, data$y, c('*Mean|Control*', '*Mean|Treatment*'), paired = TRUE)
+cat(tt)
 
 }

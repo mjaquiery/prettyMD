@@ -4,7 +4,7 @@
 \alias{prop2str}
 \title{Wrapper for \code{num2str(..., isProportion = T)}}
 \usage{
-prop2str(x, precision = 3, ...)
+prop2str(x, precision = 3, minPrefix = "< ", ...)
 }
 \arguments{
 \item{...}{Arguments passed on to \code{num2str}
@@ -13,6 +13,7 @@ prop2str(x, precision = 3, ...)
   \item{precision}{decimal places to preserve}
   \item{isProportion}{whether to strip leading 0 for 0.x values}
   \item{truncateZeros}{whether to strip trailing 0s}
+  \item{minPrefix}{for transforming numbers like .000 into < .001}
 }}
 }
 \description{

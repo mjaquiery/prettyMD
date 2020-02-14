@@ -5,23 +5,33 @@
 #' @param precision decimal places to preserve
 #' @param isProportion whether to strip leading 0 for 0.x values
 #' @param truncateZeros whether to strip trailing 0s
+#' @param minPrefix for transforming numbers like .000 into < .001
 #' @param ... discarded arguments used to allow overflowed calls from other functions
 #' @return \code{num} stripped of leading 0s and rounded to \code{precision} decimal places
+#'
+#' @importFrom stringr str_detect str_replace
 #'
 #' @examples
 #' data.frame(input = c(seq(-10,10),100), output = num2str(exp(c(seq(-10,10),100)), 4))
 #' data.frame(input = c(seq(-10,10),100), output = num2str(exp(c(seq(-10,10),100)), 4, isProportion = TRUE))
 #'
 #' @export
-num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F, ...) {
+num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F,
+                    minPrefix = NA, ...) {
   if (length(grep("tibble", sessionInfo())))
     if (tibble::is.tibble(num))
-      return(num2str.tibble(num, precision, isProportion, truncateZeros, ...))
+      return(num2str.tibble(num,
+                            precision = precision,
+                            isProportion = isProportion,
+                            truncateZeros = truncateZeros,
+                            minPrefix = minPrefix,
+                            ...))
   if (length(num) > 1)
     return(sapply(num, function(x) num2str(num = x,
                                            precision = precision,
                                            isProportion = isProportion,
-                                           truncateZeros = truncateZeros)))
+                                           truncateZeros = truncateZeros,
+                                           minPrefix = minPrefix)))
   if (!is.numeric(num) | is.nan(num) | is.na(num))
     return(as.character(num))
   num <- round(num, precision)
@@ -47,6 +57,15 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F, ...
   right <- substr(x, dot, dot + precision) # portion of x after 0
   right <- paste0(right, strrep('0',precision - nchar(right) + 1))
   x <- paste0(substr(x, 1, dot - 1), right)
+
+  # Adding < .001 notation if required
+  if (!is.na(minPrefix))
+    x <- ifelse(
+      str_detect(x, '^0?\\.?0*$'),
+      paste0(minPrefix, str_replace(x, '0$', '1')),
+      x
+    )
+
   return(x)
 }
 
@@ -60,8 +79,8 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F, ...
 #' )
 #'
 #' @export
-prop2str <- function(x, precision = 3, ...) {
-  return(num2str(x, precision, isProportion = T, ...))
+prop2str <- function(x, precision = 3, minPrefix = '< ', ...) {
+  return(num2str(x, precision, minPrefix = '< ', isProportion = T, ...))
 }
 
 #' Format entries in a tibble using num2str
@@ -77,7 +96,12 @@ prop2str <- function(x, precision = 3, ...) {
 #' num2str.tibble(x, isProportion = c(NA, NA, T, T), truncateZeros = c(F, F, F, T))
 #'
 #' @export
-num2str.tibble <- function(tbl, precision = 2, isProportion = F, truncateZeros = F, ...) {
+num2str.tibble <- function(tbl,
+                           precision = 2,
+                           isProportion = F,
+                           truncateZeros = F,
+                           minPrefix = NA,
+                           ...) {
   if (length(precision) == 1)
     precision <- rep(precision, ncol(tbl))
   if (length(isProportion) == 1)
@@ -93,7 +117,8 @@ num2str.tibble <- function(tbl, precision = 2, isProportion = F, truncateZeros =
     tbl[, i] <- num2str(tbl[[i]],
                         precision = precision[i],
                         isProportion = isProportion[i],
-                        truncateZeros = truncateZeros[i])
+                        truncateZeros = truncateZeros[i],
+                        minPrefix = minPrefix)
   }
 
   tibble::as.tibble(tbl)
@@ -106,7 +131,7 @@ num2str.tibble <- function(tbl, precision = 2, isProportion = F, truncateZeros =
 #'
 #' @importFrom stringr str_detect
 #'
-#' @example
+#' @examples
 #' lteq('.0001')
 #' lteq('.000')
 #'

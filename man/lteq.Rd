@@ -16,3 +16,14 @@ lteq(s, non_equal_char = "<", sep = " ")
 \description{
 Format s with = if it's not 0, or < otherwise
 }
+\examples{
+lteq('.0001')
+lteq('.000')
+
+p <- t.test(rnorm(100, 1))$p.value
+p
+lteq(p)
+# string format first!
+lteq(prop2str(p, precision = 3))
+
+}

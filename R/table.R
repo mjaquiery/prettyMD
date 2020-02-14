@@ -20,10 +20,10 @@
 kableANOVA <- function(ANOVA, ...) {
 
   tmp <- ANOVA %>%
-    mutate(`F` = num2str(`F`),
-           p = num2str(p, precision = 3, isProportion = T),
+    mutate(`F` = num2str(`F`, minPrefix = '< '),
+           p = prop2str(p),
            `p<.05` = if_else(`p<.05` == "", "", "$\\text{*}$"),
-           ges = num2str(ges, precision = 3, isProportion = T))
+           ges = prop2str(ges))
   rownames(tmp) <- NULL
 
   # add degrees of freedom to F
@@ -68,10 +68,10 @@ kableLM <- function(LM, ...) {
   s <- summary(LM)
 
   p <- pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3], lower.tail = F) %>%
-    num2str(precision = 3, isProportion = T) %>%
+    prop2str(minPrefix = NA) %>%
     lteq()
 
-  r2 <- num2str(s$adj.r.squared, precision = 3, isProportion = T) %>%
+  r2 <- prop2str(s$adj.r.squared, minPrefix = NA) %>%
     lteq()
 
   s$coefficients %>%
@@ -83,6 +83,12 @@ kableLM <- function(LM, ...) {
            `$t$` = `t value`,
            `$p$` = `Pr(>|t|)`,
            ` ` = `p<.05`) %>%
+    mutate(
+      Estimate = num2str(Estimate, minPrefix = '< '),
+      SE = num2str(SE, minPrefix = '< '),
+      `$t$` = num2str(`$t$`, minPrefix = '< '),
+      `$p$` = prop2str(`$p$`)
+    ) %>%
     kable(align = c('l', 'r', 'r', 'r', 'r', 'c'),
           escape = F,
           ...) %>%
@@ -97,4 +103,153 @@ kableLM <- function(LM, ...) {
         "; $R^2_{adj}$ ", r2
       )
     )
+}
+
+#' Return a row with columns named for the coefficients and values containing
+#' the requested property for each of models
+#'
+#' @param models list of (lm) models to extract property from
+#' @param property to extract
+#'
+#' @importFrom dplyr bind_cols full_join
+#'
+.modelValues <- function(models, property = "Estimate") {
+  out <- NULL
+  for (i in 1:length(models)) {
+    m <- summary(models[[i]])
+    if (!(property %in% colnames(m$coefficients)))
+      warning(paste0("Property '", property, "' not found in model ", i))
+
+    n <- which(colnames(m$coefficients) == property)
+    tmp <- m$coefficients[, n]
+    tmp <- bind_cols(model = i, as_tibble(t(tmp)))
+
+    if (is.null(out))
+      out <- tmp
+    else
+      out <- full_join(out, tmp, by = names(tmp)[names(tmp) %in% names(out)])
+  }
+
+  out
+}
+
+#' Fetch model properties for all models in a list
+#'
+#' @param models list of (lm) models for which to fetch properties
+#'
+#' @importFrom dplyr bind_rows
+#'
+.modelProperties <- function(models) {
+  out <- NULL
+  for (i in 1:length(models)) {
+    m <- summary(models[[i]])
+    tmp <- tibble(
+      model = i,
+      dfn = m$fstatistic[2],
+      dfd = m$fstatistic[3],
+      f = m$fstatistic[1],
+      pf = pf(f, dfn, dfd, lower.tail = F),
+      rsq_adj = m$adj.r.squared
+    )
+    out <- if (is.null(out)) tmp else bind_rows(out, tmp)
+  }
+
+  out
+}
+
+#' Produce a neat table showing comparisons between various models
+#'
+#' @param models list of lm models to compare with anova()
+#' @param ... passed on to \code{kableExtra::kable}
+#'
+#' @importFrom magrittr %>%
+#' @importFrom dplyr bind_cols left_join bind_rows
+#' @import kableExtra
+#' @importFrom tibble tribble
+#'
+#' @examples
+#' m1 <- lm(Sepal.Length ~ Species, iris)
+#' m2 <- lm(Sepal.Length ~ Species + Petal.Length, iris)
+#' m3 <- lm(Sepal.Length ~ Species + Petal.Length + Petal.Width, iris)
+#' m4 <- lm(Sepal.Length ~ Species + Petal.Length + Petal.Width + Sepal.Width, iris)
+#' kableModelComparison(list(m1, m2, m3, m4))
+#'
+#' @export
+kableModelComparison <- function(models, ...) {
+  # Form table of estimates
+  est <- .modelValues(models)
+  p <- .modelValues(models, 'Pr(>|t|)')
+
+  # Form table of model properties
+  props <- .modelProperties(models)
+
+  # Comparison stats
+  a <- do.call(anova, models)
+  # Note: F = delta_R^2 F-test; f = model F-test
+  props <- bind_cols(props, a[, c('F', 'Pr(>F)')])
+
+  tbl <- NULL
+
+  for (i in 1:length(models)) {
+    tmp <- tibble()
+    for (v in 2:ncol(est)) {
+      tmp <- bind_rows(
+        tmp,
+        tribble(
+          ~var, ~property, ~value,
+          colnames(est)[v], '$\\beta$', num2str(as.numeric(est[i, v]), minPrefix = '< '),
+          colnames(p)[v], '$*p*$', prop2str(as.numeric(p[i, v]))
+        )
+      )
+    }
+
+    # Comparison stats
+    tmp <- bind_rows(
+      tmp,
+      tribble(
+        ~var, ~property, ~value,
+        '$*F*$', '$df$', paste0(props$dfn[i], ' / ', props$dfd[i]),
+        '$*F*$', '$*F*$', num2str(props$f[i], minPrefix = '< '),
+        '$*F*$', '$*p*$', prop2str(props$pf[i]),
+        '$*R^2_{adj}*$', '$*R^2_{adj}*$', prop2str(props$rsq_adj[i])
+      )
+    )
+
+    if (i == 1)
+      tmp <- bind_rows(
+        tmp,
+        tribble(
+          ~var, ~property, ~value,
+          '$*R^2_{adj}*$', '$\\Delta$', '',
+          '$*R^2_{adj}*$', '$*F*$', '',
+          '$*R^2_{adj}*$', '$*p*$', '',
+        )
+      )
+    else
+      tmp <- bind_rows(
+        tmp,
+        tribble(
+          ~var, ~property, ~value,
+          '$*R^2_{adj}*$', '$\\Delta$', prop2str(props$rsq_adj[i] - props$rsq_adj[i - 1]),
+          '$*R^2_{adj}*$', '$*F*$', num2str(props$`F`[i], minPrefix = '< '),
+          '$*R^2_{adj}*$', '$*p*$', prop2str(props$`Pr(>F)`[i])
+        )
+      )
+    tmp$value <- ifelse(is.na(tmp$value), "", tmp$value)
+    names(tmp)[3] <- i
+
+    tbl <- if (is.null(tbl)) tmp else left_join(tbl, tmp, by = c('var', 'property'))
+  }
+
+  # Print tbl neatly
+  tbl %>%
+    rename(` ` = var, `  ` = property) %>%
+    kable(
+      align = c('l', 'l', rep('r', length(models))),
+      escape = F,
+      ...
+    ) %>%
+    kable_styling() %>%
+    collapse_rows(1:2, valign = "middle") %>%
+    add_header_above(c(" " = 2, "Model" = length(models)))
 }

@@ -4,7 +4,8 @@
 \alias{num2str}
 \title{Format number to be a string beginning with a decimal point.}
 \usage{
-num2str(num, precision = 2, isProportion = F, truncateZeros = F, ...)
+num2str(num, precision = 2, isProportion = F, truncateZeros = F,
+  minPrefix = NA, ...)
 }
 \arguments{
 \item{num}{number to convert to string}
@@ -14,6 +15,8 @@ num2str(num, precision = 2, isProportion = F, truncateZeros = F, ...)
 \item{isProportion}{whether to strip leading 0 for 0.x values}
 
 \item{truncateZeros}{whether to strip trailing 0s}
+
+\item{minPrefix}{for transforming numbers like .000 into < .001}
 
 \item{...}{discarded arguments used to allow overflowed calls from other functions}
 }

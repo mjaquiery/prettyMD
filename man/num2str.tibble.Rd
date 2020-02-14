@@ -5,7 +5,7 @@
 \title{Format entries in a tibble using num2str}
 \usage{
 num2str.tibble(tbl, precision = 2, isProportion = F,
-  truncateZeros = F, ...)
+  truncateZeros = F, minPrefix = NA, ...)
 }
 \arguments{
 \item{...}{Arguments passed on to \code{num2str}
@@ -14,6 +14,7 @@ num2str.tibble(tbl, precision = 2, isProportion = F,
   \item{precision}{decimal places to preserve}
   \item{isProportion}{whether to strip leading 0 for 0.x values}
   \item{truncateZeros}{whether to strip trailing 0s}
+  \item{minPrefix}{for transforming numbers like .000 into < .001}
 }}
 }
 \description{

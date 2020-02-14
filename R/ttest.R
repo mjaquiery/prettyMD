@@ -25,23 +25,37 @@ md.t <- function(result, decimals = 2, decimals.p = NULL) {
   return(out)
 }
 
-#' Run a t-test and return neatly formatted output
-#' \code{x}, and either \code{y} or \code{mu} must be specified.
+#' Run a t-test and return neatly formatted output \code{x}, and either \code{y}
+#' or \code{mu} must be specified.
 #' @param x vector for testing
 #' @param y additional vector for testing. If singular, functions as \code{mu}
-#' @param labels vector of labels for x and y
+#' @param labels vector of labels for x and y. If NULL, use attr(., 'label'), NA
+#'   to suppress this behaviour.
 #' @param mu value against which x will be tested
 #' @param paired whether observations are paired (e.g. repeated measures)
 #' @inheritDotParams md.mean
 #'
 #' @examples
 #' data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
-#' md.ttest(data$x, data$y, c('*Mean|Control*', '*Mean|Treatment*'), paired = TRUE)
+#' tt <- md.ttest(data$x, data$y, c('*Mean|Control*', '*Mean|Treatment*'), paired = TRUE)
+#' cat(tt)
 #'
-#' @return formatted string like t(df) = 3.68, p < .05, d = 0.23, BF = 4.50; M1 = 3.05 [1.23, 4.55], M2 = 5.12 [4.20, 5.99]
+#' @return formatted string like t(df) = 3.68, p < .05, d = 0.23, BF = 4.50; M1
+#'   = 3.05 [1.23, 4.55], M2 = 5.12 [4.20, 5.99]
 #'
 #' @export
 md.ttest <- function(x, y = NULL, labels = NULL, mu = NULL, paired = F, ...) {
+  if (is.null(labels)) {
+    if (!is.null(attr(x, 'label')))
+      labels <- attr(x, 'label')
+    if (!all(is.null(y)) && !is.null(attr(y, 'label')))
+      labels <- c(labels, attr(y, 'label'))
+  }
+  if (!all(is.null(labels)) && is.na(labels))
+    labels <- NULL
+
+  # coerce to numeric vectors and drop labels
+  x <- as.numeric(x); y <- as.numeric(y)
   pkgs <- list()
   for (pkg in c('lsr', 'BayesFactor'))
     pkgs[[pkg]] <- requireNamespace(pkg, quietly = T)
