@@ -20,7 +20,7 @@
 kableANOVA <- function(ANOVA, ...) {
 
   tmp <- ANOVA %>%
-    mutate(`F` = num2str(`F`, minPrefix = '< '),
+    mutate(`F` = num2str(`F`),
            p = prop2str(p),
            `p<.05` = if_else(`p<.05` == "", "", "$\\text{*}$"),
            ges = prop2str(ges))
@@ -84,9 +84,9 @@ kableLM <- function(LM, ...) {
            `$p$` = `Pr(>|t|)`,
            ` ` = `p<.05`) %>%
     mutate(
-      Estimate = num2str(Estimate, minPrefix = '< '),
-      SE = num2str(SE, minPrefix = '< '),
-      `$t$` = num2str(`$t$`, minPrefix = '< '),
+      Estimate = num2str(Estimate),
+      SE = num2str(SE),
+      `$t$` = num2str(`$t$`),
       `$p$` = prop2str(`$p$`)
     ) %>%
     kable(align = c('l', 'r', 'r', 'r', 'r', 'c'),
@@ -197,8 +197,8 @@ kableModelComparison <- function(models, ...) {
         tmp,
         tribble(
           ~var, ~property, ~value,
-          colnames(est)[v], '$\\beta$', num2str(as.numeric(est[i, v]), minPrefix = '< '),
-          colnames(p)[v], '$*p*$', prop2str(as.numeric(p[i, v]))
+          colnames(est)[v], '$\\beta$', num2str(as.numeric(est[i, v])),
+          colnames(p)[v], '$p$', prop2str(as.numeric(p[i, v]))
         )
       )
     }
@@ -208,10 +208,10 @@ kableModelComparison <- function(models, ...) {
       tmp,
       tribble(
         ~var, ~property, ~value,
-        '$*F*$', '$df$', paste0(props$dfn[i], ' / ', props$dfd[i]),
-        '$*F*$', '$*F*$', num2str(props$f[i], minPrefix = '< '),
-        '$*F*$', '$*p*$', prop2str(props$pf[i]),
-        '$*R^2_{adj}*$', '$*R^2_{adj}*$', prop2str(props$rsq_adj[i])
+        '$F$', '$df$', paste0(props$dfn[i], ' / ', props$dfd[i]),
+        '$F$', '$F$', num2str(props$f[i]),
+        '$F$', '$p$', prop2str(props$pf[i]),
+        '$R^2_{adj}$', '$R^2_{adj}$', prop2str(props$rsq_adj[i], minPrefix = NA)
       )
     )
 
@@ -220,9 +220,9 @@ kableModelComparison <- function(models, ...) {
         tmp,
         tribble(
           ~var, ~property, ~value,
-          '$*R^2_{adj}*$', '$\\Delta$', '',
-          '$*R^2_{adj}*$', '$*F*$', '',
-          '$*R^2_{adj}*$', '$*p*$', '',
+          '$R^2_{adj}$', '$\\Delta$', '',
+          '$R^2_{adj}$', '$F$', '',
+          '$R^2_{adj}$', '$p$', '',
         )
       )
     else
@@ -230,9 +230,9 @@ kableModelComparison <- function(models, ...) {
         tmp,
         tribble(
           ~var, ~property, ~value,
-          '$*R^2_{adj}*$', '$\\Delta$', prop2str(props$rsq_adj[i] - props$rsq_adj[i - 1]),
-          '$*R^2_{adj}*$', '$*F*$', num2str(props$`F`[i], minPrefix = '< '),
-          '$*R^2_{adj}*$', '$*p*$', prop2str(props$`Pr(>F)`[i])
+          '$R^2_{adj}$', '$\\Delta$', prop2str(props$rsq_adj[i] - props$rsq_adj[i - 1], minPrefix = NA),
+          '$R^2_{adj}$', '$F$', num2str(props$`F`[i]),
+          '$R^2_{adj}$', '$p$', prop2str(props$`Pr(>F)`[i])
         )
       )
     tmp$value <- ifelse(is.na(tmp$value), "", tmp$value)
@@ -245,7 +245,7 @@ kableModelComparison <- function(models, ...) {
   tbl %>%
     rename(` ` = var, `  ` = property) %>%
     kable(
-      align = c('l', 'l', rep('r', length(models))),
+      align = c('l', 'c', rep('r', length(models))),
       escape = F,
       ...
     ) %>%

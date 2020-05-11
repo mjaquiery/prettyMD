@@ -80,7 +80,7 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F,
 #'
 #' @export
 prop2str <- function(x, precision = 3, minPrefix = '< ', ...) {
-  return(num2str(x, precision, minPrefix = '< ', isProportion = T, ...))
+  return(num2str(x, precision, minPrefix = minPrefix, isProportion = T, ...))
 }
 
 #' Format entries in a tibble using num2str
@@ -145,7 +145,7 @@ num2str.tibble <- function(tbl,
 lteq <- function(s, non_equal_char = '<', sep = ' ') {
   x <- if (str_detect(s, '[^\\.0]')) '=' else non_equal_char
 
-  paste0(x, sep, s)
+  paste0(x, sep, str_replace(s, '0$', '1'))
 }
 
 #' Print the mean and CIs of a vector
