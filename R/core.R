@@ -143,7 +143,7 @@ num2str.tibble <- function(tbl,
 #'
 #' @export
 lteq <- function(s, non_equal_char = '<', sep = ' ') {
-  x <- if (str_detect(s, '[^\\.0]')) '=' else non_equal_char
+  x <- ifelse(str_detect(s, '[^\\.0]'), '=', non_equal_char)
 
   paste0(x, sep, str_replace(s, '0$', '1'))
 }
