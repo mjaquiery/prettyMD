@@ -7,15 +7,16 @@
 md.ttestBF(...)
 }
 \arguments{
-\item{...}{Arguments passed on to \code{md.ttest}
-\describe{
-  \item{x}{vector for testing}
-  \item{y}{additional vector for testing. If singular, functions as \code{mu}}
-  \item{labels}{vector of labels for x and y. If NULL, use attr(., 'label'), NA
+\item{...}{
+  Arguments passed on to \code{\link[=md.ttest]{md.ttest}}
+  \describe{
+    \item{\code{x}}{vector for testing}
+    \item{\code{y}}{additional vector for testing. If singular, functions as \code{mu}}
+    \item{\code{labels}}{vector of labels for x and y. If NULL, use attr(., 'label'), NA
 to suppress this behaviour.}
-  \item{mu}{value against which x will be tested}
-  \item{paired}{whether observations are paired (e.g. repeated measures)}
-}}
+    \item{\code{mu}}{value against which x will be tested}
+    \item{\code{paired}}{whether observations are paired (e.g. repeated measures)}
+  }}
 }
 \description{
 Return only the BayesFactor and means part of a t-test

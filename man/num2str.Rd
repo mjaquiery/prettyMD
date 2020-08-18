@@ -4,8 +4,14 @@
 \alias{num2str}
 \title{Format number to be a string beginning with a decimal point.}
 \usage{
-num2str(num, precision = 2, isProportion = F, truncateZeros = F,
-  minPrefix = NA, ...)
+num2str(
+  num,
+  precision = 2,
+  isProportion = F,
+  truncateZeros = F,
+  minPrefix = NA,
+  ...
+)
 }
 \arguments{
 \item{num}{number to convert to string}

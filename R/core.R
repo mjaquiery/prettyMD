@@ -19,7 +19,7 @@
 num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F,
                     minPrefix = NA, ...) {
   if (length(grep("tibble", sessionInfo())))
-    if (tibble::is.tibble(num))
+    if (tibble::is_tibble(num))
       return(num2str.tibble(num,
                             precision = precision,
                             isProportion = isProportion,
@@ -31,7 +31,8 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F,
                                            precision = precision,
                                            isProportion = isProportion,
                                            truncateZeros = truncateZeros,
-                                           minPrefix = minPrefix)))
+                                           minPrefix = minPrefix,
+                                           ...)))
   if (!is.numeric(num) | is.nan(num) | is.na(num))
     return(as.character(num))
   num <- round(num, precision)
@@ -70,6 +71,9 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F,
 }
 
 #' Wrapper for \code{num2str(..., isProportion = T)}
+#' @param x number to stringify
+#' @param precision number of decimal places to preserve
+#' @param minPrefix prefix for numbers that would render as .0
 #' @inheritDotParams num2str
 #'
 #'@examples
@@ -83,7 +87,50 @@ prop2str <- function(x, precision = 3, minPrefix = '< ', ...) {
   return(num2str(x, precision, minPrefix = minPrefix, isProportion = T, ...))
 }
 
+#' Format Bayes factors in a nice way using scientific notation where necessary
+#' @param bf Bayes factor to represent
+#' @param width number of numbers to show
+#'
+#' @examples
+#'  bfs <- c(1/2342356, 1/23424, 1/2343, 1/234, 1/2, 2, 56, 872, 99887, 2342e7)
+#'  bf2str(bfs)
+#'
+#' @export
+bf2str <- function(bf, width = 3) {
+  prefix = ifelse(bf < 1, '1/', '')
+  x <- ifelse(bf < 1, 1/bf, bf)
+  nub <- x
+  while (any(nub >= 10)) {
+    nub <- ifelse(nub >= 10, nub / 10, nub)
+  }
+
+  nub.c <- ifelse(grepl('\\.', as.character(nub)), nub, paste0(nub, '.'))
+  nub.c <- paste0(nub.c, strrep(0, width))
+
+  e <- log(x / nub, base = 10)
+
+  eLen <- nchar(as.character(e))
+
+  x.c <- ifelse(
+    e < width,
+    substr(nub.c, 1, width + 1),
+    substr(nub.c, 1, ifelse(width - (eLen - 1) == 2, 3, width - (eLen - 1)))
+  )
+  e.c <- ifelse(
+    e < width,
+    '',
+    paste0('e', e)
+  )
+
+  paste0(prefix, x.c, e.c)
+}
+
 #' Format entries in a tibble using num2str
+#' @param tbl tibble to execute num2str
+#' @param precision decimal places to preserve
+#' @param isProportion whether to strip leading 0 for 0.x values
+#' @param truncateZeros whether to strip trailing 0s
+#' @param minPrefix for transforming numbers like .000 into < .001
 #' @inheritDotParams num2str
 #'
 #' @description
@@ -121,7 +168,7 @@ num2str.tibble <- function(tbl,
                         minPrefix = minPrefix)
   }
 
-  tibble::as.tibble(tbl)
+  tibble::as_tibble(tbl)
 }
 
 #' Format s with = if it's not 0, or < otherwise
@@ -193,8 +240,8 @@ md.mean <- function(vector, label = '*M*', decimals = 2, na.rm = F, conf.int = .
 #'
 #' @examples
 #' \dontrun{
-#'
-#' data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
+#' # two normal distributions with some overlap
+#' data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2))
 #' md.BF(BayesFactor::ttestBF(data$x, data$y, paired = TRUE))
 #' }
 #'

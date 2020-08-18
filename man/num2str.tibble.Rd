@@ -4,18 +4,31 @@
 \alias{num2str.tibble}
 \title{Format entries in a tibble using num2str}
 \usage{
-num2str.tibble(tbl, precision = 2, isProportion = F,
-  truncateZeros = F, minPrefix = NA, ...)
+num2str.tibble(
+  tbl,
+  precision = 2,
+  isProportion = F,
+  truncateZeros = F,
+  minPrefix = NA,
+  ...
+)
 }
 \arguments{
-\item{...}{Arguments passed on to \code{num2str}
-\describe{
-  \item{num}{number to convert to string}
-  \item{precision}{decimal places to preserve}
-  \item{isProportion}{whether to strip leading 0 for 0.x values}
-  \item{truncateZeros}{whether to strip trailing 0s}
-  \item{minPrefix}{for transforming numbers like .000 into < .001}
-}}
+\item{tbl}{tibble to execute num2str}
+
+\item{precision}{decimal places to preserve}
+
+\item{isProportion}{whether to strip leading 0 for 0.x values}
+
+\item{truncateZeros}{whether to strip trailing 0s}
+
+\item{minPrefix}{for transforming numbers like .000 into < .001}
+
+\item{...}{
+  Arguments passed on to \code{\link[=num2str]{num2str}}
+  \describe{
+    \item{\code{num}}{number to convert to string}
+  }}
 }
 \description{
 Parameters for \code{num2str} can be specified as vectors indicating the

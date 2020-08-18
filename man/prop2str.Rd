@@ -7,14 +7,19 @@
 prop2str(x, precision = 3, minPrefix = "< ", ...)
 }
 \arguments{
-\item{...}{Arguments passed on to \code{num2str}
-\describe{
-  \item{num}{number to convert to string}
-  \item{precision}{decimal places to preserve}
-  \item{isProportion}{whether to strip leading 0 for 0.x values}
-  \item{truncateZeros}{whether to strip trailing 0s}
-  \item{minPrefix}{for transforming numbers like .000 into < .001}
-}}
+\item{x}{number to stringify}
+
+\item{precision}{number of decimal places to preserve}
+
+\item{minPrefix}{prefix for numbers that would render as .0}
+
+\item{...}{
+  Arguments passed on to \code{\link[=num2str]{num2str}}
+  \describe{
+    \item{\code{num}}{number to convert to string}
+    \item{\code{isProportion}}{whether to strip leading 0 for 0.x values}
+    \item{\code{truncateZeros}}{whether to strip trailing 0s}
+  }}
 }
 \description{
 Wrapper for \code{num2str(..., isProportion = T)}

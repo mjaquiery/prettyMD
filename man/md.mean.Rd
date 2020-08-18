@@ -4,8 +4,15 @@
 \alias{md.mean}
 \title{Print the mean and CIs of a vector}
 \usage{
-md.mean(vector, label = "*M*", decimals = 2, na.rm = F,
-  conf.int = 0.95, isProportion = F, showRange = F)
+md.mean(
+  vector,
+  label = "*M*",
+  decimals = 2,
+  na.rm = F,
+  conf.int = 0.95,
+  isProportion = F,
+  showRange = F
+)
 }
 \arguments{
 \item{vector}{data in}

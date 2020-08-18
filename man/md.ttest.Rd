@@ -19,16 +19,17 @@ to suppress this behaviour.}
 
 \item{paired}{whether observations are paired (e.g. repeated measures)}
 
-\item{...}{Arguments passed on to \code{md.mean}
-\describe{
-  \item{vector}{data in}
-  \item{label}{markdown prefix for the stats}
-  \item{conf.int}{width of the confidence intervals, NA to suppress}
-  \item{na.rm}{whether NA values are removed before averaging}
-  \item{decimals}{decimal places to round to}
-  \item{isProportion}{whether to print the values as proportions (strip leading 0)}
-  \item{showRange}{whether to include the range of the data}
-}}
+\item{...}{
+  Arguments passed on to \code{\link[=md.mean]{md.mean}}
+  \describe{
+    \item{\code{vector}}{data in}
+    \item{\code{label}}{markdown prefix for the stats}
+    \item{\code{conf.int}}{width of the confidence intervals, NA to suppress}
+    \item{\code{na.rm}}{whether NA values are removed before averaging}
+    \item{\code{decimals}}{decimal places to round to}
+    \item{\code{isProportion}}{whether to print the values as proportions (strip leading 0)}
+    \item{\code{showRange}}{whether to include the range of the data}
+  }}
 }
 \value{
 formatted string like t(df) = 3.68, p < .05, d = 0.23, BF = 4.50; M1

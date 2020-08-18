@@ -9,22 +9,23 @@ md.BF(bayesTest, ...)
 \arguments{
 \item{bayesTest}{the test whose parameter will be extracted}
 
-\item{...}{Arguments passed on to \code{num2str}
-\describe{
-  \item{num}{number to convert to string}
-  \item{precision}{decimal places to preserve}
-  \item{isProportion}{whether to strip leading 0 for 0.x values}
-  \item{truncateZeros}{whether to strip trailing 0s}
-  \item{minPrefix}{for transforming numbers like .000 into < .001}
-}}
+\item{...}{
+  Arguments passed on to \code{\link[=num2str]{num2str}}
+  \describe{
+    \item{\code{num}}{number to convert to string}
+    \item{\code{precision}}{decimal places to preserve}
+    \item{\code{isProportion}}{whether to strip leading 0 for 0.x values}
+    \item{\code{truncateZeros}}{whether to strip trailing 0s}
+    \item{\code{minPrefix}}{for transforming numbers like .000 into < .001}
+  }}
 }
 \description{
 Extract the Bayes Factor from a Bayesian test
 }
 \examples{
 \dontrun{
-
-data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
+# two normal distributions with some overlap
+data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2))
 md.BF(BayesFactor::ttestBF(data$x, data$y, paired = TRUE))
 }
 

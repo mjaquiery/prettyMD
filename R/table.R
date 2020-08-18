@@ -59,7 +59,7 @@ kableANOVA <- function(ANOVA, ...) {
 #' kableLM(r)
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr mutate select as_tibble
+#' @importFrom dplyr mutate select as_tibble if_else
 #' @import kableExtra
 #'
 #' @export
@@ -163,9 +163,9 @@ kableLM <- function(LM, ...) {
 #' @param ... passed on to \code{kableExtra::kable}
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr bind_cols left_join bind_rows
+#' @importFrom dplyr bind_cols left_join bind_rows rename
 #' @import kableExtra
-#' @importFrom tibble tribble
+#' @importFrom tibble tribble tibble
 #'
 #' @examples
 #' m1 <- lm(Sepal.Length ~ Species, iris)
