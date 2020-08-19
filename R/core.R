@@ -247,6 +247,6 @@ md.mean <- function(vector, label = '*M*', decimals = 2, na.rm = F, conf.int = .
 #'
 #' @export
 md.BF <- function(bayesTest, ...) {
-  out <- paste('BF =', num2str(exp(bayesTest@bayesFactor$bf)), ...)
+  out <- paste('BF =', bf2str(exp(bayesTest@bayesFactor$bf)), ...)
   return(out)
 }
