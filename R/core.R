@@ -95,11 +95,15 @@ prop2str <- function(x, precision = 3, minPrefix = '< ', ...) {
 #'  bfs <- c(1/2342356, 1/23424, 1/2343, 1/234, 1/2, 2, 56, 872, 99887, 2342e7)
 #'  bf2str(bfs)
 #'
+#'  # Drop trailing decimal points
+#'  bf2str(c(3.2, 30.2, 300, 300.45, 3000.25))
+#'
 #' @export
 bf2str <- function(bf, width = 3) {
   prefix = ifelse(bf < 1, '1/', '')
   x <- ifelse(bf < 1, 1/bf, bf)
   nub <- x
+
   while (any(nub >= 10)) {
     nub <- ifelse(nub >= 10, nub / 10, nub)
   }
@@ -113,9 +117,15 @@ bf2str <- function(bf, width = 3) {
 
   x.c <- ifelse(
     e < width,
-    substr(nub.c, 1, width + 1),
+    substr(x, 1, width + 1),
     substr(nub.c, 1, ifelse(width - (eLen - 1) == 2, 3, width - (eLen - 1)))
   )
+  x.c <- ifelse(
+    grepl('\\.$', x.c),
+    substr(x.c, 1, nchar(x.c) - 1),
+    x.c
+  )
+
   e.c <- ifelse(
     e < width,
     '',
@@ -216,7 +226,7 @@ md.mean <- function(vector, label = '*M*', decimals = 2, na.rm = F, conf.int = .
   out <- paste0(label,' = ', num2str(mu,decimals, isProportion = isProportion))
 
   if(!is.na(conf.int)) {
-     if (!requireNamespace("lsr", quietly = TRUE)) {
+    if (!requireNamespace("lsr", quietly = TRUE)) {
       stop("Package \"lsr\" needed to calculate confidence intervals. Please install it or use md.mean(..., conf.int = NA).",
            call. = FALSE)
     }
