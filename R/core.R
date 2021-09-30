@@ -5,6 +5,7 @@
 #' @param precision decimal places to preserve
 #' @param isProportion whether to strip leading 0 for 0.x values
 #' @param truncateZeros whether to strip trailing 0s
+#' @param prefix prefix for the number string (e.g. " = ")
 #' @param minPrefix for transforming numbers like .000 into < .001
 #' @param ... discarded arguments used to allow overflowed calls from other functions
 #' @return \code{num} stripped of leading 0s and rounded to \code{precision} decimal places
@@ -16,23 +17,37 @@
 #' data.frame(input = c(seq(-10,10),100), output = num2str(exp(c(seq(-10,10),100)), 4, isProportion = TRUE))
 #'
 #' @export
-num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F,
-                    minPrefix = NA, ...) {
+num2str <- function(
+  num,
+  precision = 2,
+  isProportion = F,
+  truncateZeros = F,
+  prefix = "",
+  minPrefix = NA,
+  ...
+) {
+  scipen <- options(scipen = 999)
   if (length(grep("tibble", sessionInfo())))
     if (tibble::is_tibble(num))
-      return(num2str.tibble(num,
-                            precision = precision,
-                            isProportion = isProportion,
-                            truncateZeros = truncateZeros,
-                            minPrefix = minPrefix,
-                            ...))
+      return(num2str.tibble(
+        num,
+        precision = precision,
+        isProportion = isProportion,
+        truncateZeros = truncateZeros,
+        prefix = prefix,
+        minPrefix = minPrefix,
+        ...
+      ))
   if (length(num) > 1)
-    return(sapply(num, function(x) num2str(num = x,
-                                           precision = precision,
-                                           isProportion = isProportion,
-                                           truncateZeros = truncateZeros,
-                                           minPrefix = minPrefix,
-                                           ...)))
+    return(sapply(num, function(x) num2str(
+      num = x,
+      precision = precision,
+      isProportion = isProportion,
+      truncateZeros = truncateZeros,
+      prefix = prefix,
+      minPrefix = minPrefix,
+      ...
+    )))
   if (!is.numeric(num) | is.nan(num) | is.na(num))
     return(as.character(num))
   num <- round(num, precision)
@@ -48,7 +63,7 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F,
   else
     x <- as.character(num)
   if (truncateZeros)
-    return(x)
+    return(ifelse(x == "0.", "0", x))
   # string manipulation to pad 0s
   dot <- regexpr('.', x, fixed = T)
   if (dot == -1) {
@@ -64,9 +79,12 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F,
     x <- ifelse(
       str_detect(x, '^0?\\.?0*$'),
       paste0(minPrefix, str_replace(x, '0$', '1')),
-      x
+      paste0(prefix, x)
     )
+  else
+    x <- paste0(prefix, x)
 
+  options(scipen = scipen)
   return(x)
 }
 
@@ -83,8 +101,39 @@ num2str <- function(num, precision = 2, isProportion = F, truncateZeros = F,
 #' )
 #'
 #' @export
-prop2str <- function(x, precision = 3, minPrefix = '< ', ...) {
-  return(num2str(x, precision, minPrefix = minPrefix, isProportion = T, ...))
+prop2str <- function(x, precision = 3, ...) {
+  return(num2str(x, precision, isProportion = T, ...))
+}
+
+#' Wrapper for \code{num2str(..., isProportion = T, prefix = " = ", minPrefix = " < ")}
+#' Designed for reporting p-values
+#' @param x number to convert to string
+#' @param precision decimal places to preserve
+#' @param isProportion whether to strip leading 0 for 0.x values
+#' @param prefix prefix for the number string (e.g. " = ")
+#' @param minPrefix for transforming numbers like .000 into < .001
+#' @inheritDotParams num2str
+#'
+#'@examples
+#' data.frame(input = c(seq(-10,10),100),
+#'   num = num2str(exp(c(seq(-10,10),100)), 4),
+#'   p = p2str(exp(c(seq(-10,10),100)), 4)
+#' )
+#'
+#' @return \code{x} stripped of leading 0s and rounded to \code{precision} decimal places
+#'
+#' @export
+p2str <- function(x, precision = 3, prefix = " = ", minPrefix = " < ", ...) {
+  return(
+    num2str(
+      x,
+      precision,
+      prefix = prefix,
+      minPrefix = minPrefix,
+      isProportion = T,
+      ...
+    )
+  )
 }
 
 #' Format Bayes factors in a nice way using scientific notation where necessary
@@ -157,6 +206,7 @@ num2str.tibble <- function(tbl,
                            precision = 2,
                            isProportion = F,
                            truncateZeros = F,
+                           prefix = "",
                            minPrefix = NA,
                            ...) {
   if (length(precision) == 1)
@@ -175,6 +225,7 @@ num2str.tibble <- function(tbl,
                         precision = precision[i],
                         isProportion = isProportion[i],
                         truncateZeros = truncateZeros[i],
+                        prefix = prefix,
                         minPrefix = minPrefix)
   }
 
