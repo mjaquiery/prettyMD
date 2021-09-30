@@ -100,7 +100,8 @@ kableLM <- function(LM, ...) {
         round(s$fstatistic[2], 1), ") = ",
         round(s$fstatistic[3], 2), "; $p$ ", p,
         "; $R^2_{adj}$ ", r2
-      )
+      ),
+      escape = F
     )
 }
 

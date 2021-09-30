@@ -20,8 +20,8 @@ md.t <- function(result, decimals = 2, decimals.p = NULL) {
   p <- ifelse(result$p.value < 10^-decimals.p,
               paste0('< .', strrep('0', decimals.p - 1), '1'),
               paste0(p2str(result$p.value, precision = decimals.p)))
-  out <- paste0('*t*(', df, ') = ', stat,
-                ', *p* ', p)
+  out <- paste0('_t_(', df, ') = ', stat,
+                ', _p_ ', p)
   return(out)
 }
 
@@ -72,7 +72,7 @@ md.ttest <- function(x, y = NULL, labels = NULL, mu = NULL, paired = F, ...) {
     y = ifelse(is.null(mu), y, mu)
     .t <- md.t(t.test(x, mu = y, paired = paired))
     .d <- ifelse(pkgs[['lsr']],
-                 paste(', *d* =', num2str(lsr::cohensD(x, mu = y), ...)),
+                 paste(', _d_ =', num2str(lsr::cohensD(x, mu = y), ...)),
                  NULL)
     .bf <- ifelse(pkgs[['BayesFactor']],
                   paste(',', md.BF(BayesFactor::ttestBF(x, mu = y, paired = paired))),
