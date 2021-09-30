@@ -19,7 +19,7 @@ md.t <- function(result, decimals = 2, decimals.p = NULL) {
   stat <- num2str(result$statistic, decimals)
   p <- ifelse(result$p.value < 10^-decimals.p,
               paste0('< .', strrep('0', decimals.p - 1), '1'),
-              paste0(' = ', num2str(result$p.value, decimals.p, isProportion = T)))
+              paste0(' = ', p2str(result$p.value, precision = decimals.p)))
   out <- paste0('*t*(', df, ') = ', stat,
                 ', *p* ', p)
   return(out)
