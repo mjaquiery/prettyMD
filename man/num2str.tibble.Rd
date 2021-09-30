@@ -9,6 +9,7 @@ num2str.tibble(
   precision = 2,
   isProportion = F,
   truncateZeros = F,
+  prefix = "",
   minPrefix = NA,
   ...
 )
@@ -21,6 +22,8 @@ num2str.tibble(
 \item{isProportion}{whether to strip leading 0 for 0.x values}
 
 \item{truncateZeros}{whether to strip trailing 0s}
+
+\item{prefix}{prefix for the number string (e.g. " = ")}
 
 \item{minPrefix}{for transforming numbers like .000 into < .001}
 
@@ -37,6 +40,10 @@ columns to which values apply, with NA interpreted as using the default value
 \examples{
 library(tibble)
 x <- tibble(chr = "character", int = 1:10, prop = runif(10), tProp = runif(10))
-num2str.tibble(x, isProportion = c(NA, NA, T, T), truncateZeros = c(F, F, F, T))
+num2str.tibble(
+  x,
+  isProportion = c(NA, NA, TRUE, TRUE),
+  truncateZeros = c(FALSE, FALSE, FALSE, TRUE)
+)
 
 }

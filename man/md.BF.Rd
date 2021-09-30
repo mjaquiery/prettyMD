@@ -16,6 +16,7 @@ md.BF(bayesTest, ...)
     \item{\code{precision}}{decimal places to preserve}
     \item{\code{isProportion}}{whether to strip leading 0 for 0.x values}
     \item{\code{truncateZeros}}{whether to strip trailing 0s}
+    \item{\code{prefix}}{prefix for the number string (e.g. " = ")}
     \item{\code{minPrefix}}{for transforming numbers like .000 into < .001}
   }}
 }

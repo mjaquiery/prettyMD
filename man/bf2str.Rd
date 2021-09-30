@@ -18,4 +18,7 @@ Format Bayes factors in a nice way using scientific notation where necessary
  bfs <- c(1/2342356, 1/23424, 1/2343, 1/234, 1/2, 2, 56, 872, 99887, 2342e7)
  bf2str(bfs)
 
+ # Drop trailing decimal points
+ bf2str(c(3.2, 30.2, 300, 300.45, 3000.25))
+
 }

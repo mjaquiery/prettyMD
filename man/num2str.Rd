@@ -9,6 +9,7 @@ num2str(
   precision = 2,
   isProportion = F,
   truncateZeros = F,
+  prefix = "",
   minPrefix = NA,
   ...
 )
@@ -22,6 +23,8 @@ num2str(
 
 \item{truncateZeros}{whether to strip trailing 0s}
 
+\item{prefix}{prefix for the number string (e.g. " = ")}
+
 \item{minPrefix}{for transforming numbers like .000 into < .001}
 
 \item{...}{discarded arguments used to allow overflowed calls from other functions}
@@ -34,6 +37,9 @@ Format number to be a string beginning with a decimal point.
 }
 \examples{
 data.frame(input = c(seq(-10,10),100), output = num2str(exp(c(seq(-10,10),100)), 4))
-data.frame(input = c(seq(-10,10),100), output = num2str(exp(c(seq(-10,10),100)), 4, isProportion = TRUE))
+data.frame(
+  input = c(seq(-10,10),100),
+  output = num2str(exp(c(seq(-10,10),100)), 4, isProportion = TRUE)
+)
 
 }

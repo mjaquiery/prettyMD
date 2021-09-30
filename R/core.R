@@ -14,7 +14,10 @@
 #'
 #' @examples
 #' data.frame(input = c(seq(-10,10),100), output = num2str(exp(c(seq(-10,10),100)), 4))
-#' data.frame(input = c(seq(-10,10),100), output = num2str(exp(c(seq(-10,10),100)), 4, isProportion = TRUE))
+#' data.frame(
+#'   input = c(seq(-10,10),100),
+#'   output = num2str(exp(c(seq(-10,10),100)), 4, isProportion = TRUE)
+#' )
 #'
 #' @export
 num2str <- function(
@@ -91,7 +94,6 @@ num2str <- function(
 #' Wrapper for \code{num2str(..., isProportion = T)}
 #' @param x number to stringify
 #' @param precision number of decimal places to preserve
-#' @param minPrefix prefix for numbers that would render as .0
 #' @inheritDotParams num2str
 #'
 #'@examples
@@ -109,7 +111,6 @@ prop2str <- function(x, precision = 3, ...) {
 #' Designed for reporting p-values
 #' @param x number to convert to string
 #' @param precision decimal places to preserve
-#' @param isProportion whether to strip leading 0 for 0.x values
 #' @param prefix prefix for the number string (e.g. " = ")
 #' @param minPrefix for transforming numbers like .000 into < .001
 #' @inheritDotParams num2str
@@ -189,6 +190,7 @@ bf2str <- function(bf, width = 3) {
 #' @param precision decimal places to preserve
 #' @param isProportion whether to strip leading 0 for 0.x values
 #' @param truncateZeros whether to strip trailing 0s
+#' @param prefix prefix for the number string (e.g. " = ")
 #' @param minPrefix for transforming numbers like .000 into < .001
 #' @inheritDotParams num2str
 #'
@@ -199,7 +201,11 @@ bf2str <- function(bf, width = 3) {
 #' @examples
 #' library(tibble)
 #' x <- tibble(chr = "character", int = 1:10, prop = runif(10), tProp = runif(10))
-#' num2str.tibble(x, isProportion = c(NA, NA, T, T), truncateZeros = c(F, F, F, T))
+#' num2str.tibble(
+#'   x,
+#'   isProportion = c(NA, NA, TRUE, TRUE),
+#'   truncateZeros = c(FALSE, FALSE, FALSE, TRUE)
+#' )
 #'
 #' @export
 num2str.tibble <- function(tbl,
@@ -308,6 +314,6 @@ md.mean <- function(vector, label = '*M*', decimals = 2, na.rm = F, conf.int = .
 #'
 #' @export
 md.BF <- function(bayesTest, ...) {
-  out <- paste('BF =', bf2str(exp(bayesTest@bayesFactor$bf)), ...)
+  out <- paste('BF~H1:H0~ =', bf2str(exp(bayesTest@bayesFactor$bf)), ...)
   return(out)
 }

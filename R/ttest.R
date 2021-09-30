@@ -37,7 +37,7 @@ md.t <- function(result, decimals = 2, decimals.p = NULL) {
 #'
 #' @examples
 #' data <- data.frame(x = rnorm(100), y = rnorm(100, 0.2)) # two normal distributions with some overlap
-#' tt <- md.ttest(data$x, data$y, c('*Mean|Control*', '*Mean|Treatment*'), paired = TRUE)
+#' tt <- md.ttest(data$x, data$y, c('Mean~Control~', 'Mean~Treatment~'), paired = TRUE)
 #' cat(tt)
 #'
 #' @return formatted string like t(df) = 3.68, p < .05, d = 0.23, BF = 4.50; M1
@@ -51,8 +51,8 @@ md.ttest <- function(x, y = NULL, labels = NULL, mu = NULL, paired = F, ...) {
     if (!all(is.null(y)) && !is.null(attr(y, 'label')))
       labels <- c(labels, attr(y, 'label'))
   }
-  if (!all(is.null(labels)) && is.na(labels))
-    labels <- NULL
+  if (!all(is.null(labels)) && all(is.na(labels)))
+      labels <- NULL
 
   # coerce to numeric vectors and drop labels
   x <- as.numeric(x); y <- as.numeric(y)
@@ -98,6 +98,6 @@ md.ttest <- function(x, y = NULL, labels = NULL, mu = NULL, paired = F, ...) {
 md.ttestBF <- function(...) {
   out <- md.ttest(...)
   # string slicing
-  out <- sub('^.*, BF = ', 'BF = ', out)
+  out <- sub('^.*, BF~H1:H0~ = ', 'BF~H1:H0~ = ', out)
   return(out)
 }
