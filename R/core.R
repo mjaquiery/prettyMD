@@ -29,66 +29,69 @@ num2str <- function(
   minPrefix = NA,
   ...
 ) {
-  scipen <- options(scipen = 999)
-  if (length(grep("tibble", sessionInfo())))
-    if (tibble::is_tibble(num))
-      return(num2str.tibble(
-        num,
-        precision = precision,
-        isProportion = isProportion,
-        truncateZeros = truncateZeros,
-        prefix = prefix,
-        minPrefix = minPrefix,
-        ...
-      ))
-  if (length(num) > 1)
-    return(sapply(num, function(x) num2str(
-      num = x,
-      precision = precision,
-      isProportion = isProportion,
-      truncateZeros = truncateZeros,
-      prefix = prefix,
-      minPrefix = minPrefix,
-      ...
-    )))
-  if (!is.numeric(num) | is.nan(num) | is.na(num))
-    return(as.character(num))
-  num <- round(num, precision)
-  # if we hit scientific notation then give up!
-  if (grepl('e', num, fixed = T))
-    return(as.character(num))
-  # leading 0 stripping
-  if (abs(num) < 1 & isProportion)
-    if (num == 0)
-      x <- '.'
-  else
-    x <- sub('^-?0\\.', ifelse(num < 0, '-.', '.'), as.character(num))
-  else
-    x <- as.character(num)
-  if (truncateZeros)
-    return(ifelse(x == "0.", "0", x))
-  # string manipulation to pad 0s
-  dot <- regexpr('.', x, fixed = T)
-  if (dot == -1) {
-    x <- paste0(x,'.')
-    dot <- regexpr('.', x, fixed = T)
-  }
-  right <- substr(x, dot, dot + precision) # portion of x after 0
-  right <- paste0(right, strrep('0',precision - nchar(right) + 1))
-  x <- paste0(substr(x, 1, dot - 1), right)
+  withr::with_options(
+    list(scipen = 999),
+    {
+      if (length(grep("tibble", sessionInfo())))
+        if (tibble::is_tibble(num))
+          return(num2str.tibble(
+            num,
+            precision = precision,
+            isProportion = isProportion,
+            truncateZeros = truncateZeros,
+            prefix = prefix,
+            minPrefix = minPrefix,
+            ...
+          ))
+      if (length(num) > 1)
+        return(sapply(num, function(x) num2str(
+          num = x,
+          precision = precision,
+          isProportion = isProportion,
+          truncateZeros = truncateZeros,
+          prefix = prefix,
+          minPrefix = minPrefix,
+          ...
+        )))
+      if (!is.numeric(num) | is.nan(num) | is.na(num))
+        return(as.character(num))
+      num <- round(num, precision)
+      # if we hit scientific notation then give up!
+      if (grepl('e', num, fixed = T))
+        return(as.character(num))
+      # leading 0 stripping
+      if (abs(num) < 1 & isProportion)
+        if (num == 0)
+          x <- '.'
+      else
+        x <- sub('^-?0\\.', ifelse(num < 0, '-.', '.'), as.character(num))
+      else
+        x <- as.character(num)
+      if (truncateZeros)
+        return(ifelse(x == "0.", "0", x))
+      # string manipulation to pad 0s
+      dot <- regexpr('.', x, fixed = T)
+      if (dot == -1) {
+        x <- paste0(x,'.')
+        dot <- regexpr('.', x, fixed = T)
+      }
+      right <- substr(x, dot, dot + precision) # portion of x after 0
+      right <- paste0(right, strrep('0',precision - nchar(right) + 1))
+      x <- paste0(substr(x, 1, dot - 1), right)
 
-  # Adding < .001 notation if required
-  if (!is.na(minPrefix))
-    x <- ifelse(
-      str_detect(x, '^0?\\.?0*$'),
-      paste0(minPrefix, str_replace(x, '0$', '1')),
-      paste0(prefix, x)
-    )
-  else
-    x <- paste0(prefix, x)
+      # Adding < .001 notation if required
+      if (!is.na(minPrefix))
+        x <- ifelse(
+          str_detect(x, '^0?\\.?0*$'),
+          paste0(minPrefix, str_replace(x, '0$', '1')),
+          paste0(prefix, x)
+        )
+      else
+        x <- paste0(prefix, x)
 
-  options(scipen = scipen)
-  return(x)
+      return(x)
+    }
+  )
 }
 
 #' Wrapper for \code{num2str(..., isProportion = T)}
