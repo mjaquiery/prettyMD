@@ -1,10 +1,13 @@
 Package: prettyMD
 Type: Package
 Title: Format Test Outputs with Markdown
-Version: 0.1.9
+Version: 1.0.0
+Date: 2021-10-01
 Authors@R: person("Matt", "Jaquiery", email = "matt.jaquiery@psy.ox.ac.uk",
   role = c("aut", "cre"))
-Description: Generate neatly formatted test outputs for common psychology tests with APA-style italics, number formatting, etc.
+Description: Generate neatly formatted test outputs for common psychology tests 
+  with APA-style italics, number formatting, etc.
+URL: https://github.com/mjaquiery/prettyMD
 License: MIT
 Encoding: UTF-8
 LazyData: true
@@ -20,4 +23,3 @@ Imports:
   stringr, 
   tibble,
   withr
-Date: 2020-01-17
