@@ -21,7 +21,7 @@ kableANOVA <- function(ANOVA, ...) {
 
   tmp <- ANOVA %>%
     mutate(`F` = num2str(`F`),
-           p = p2str(p),
+           p = p2str(p, prefix = "", minPrefix = "< "),
            `p<.05` = if_else(`p<.05` == "", "", "$\\text{*}$"),
            ges = prop2str(ges))
   rownames(tmp) <- NULL
@@ -68,7 +68,7 @@ kableLM <- function(LM, ...) {
   s <- summary(LM)
 
   p <- pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3], lower.tail = F) %>%
-    p2str()
+    p2str(prefix = "", minPrefix = "< ")
 
   r2 <- prop2str(s$adj.r.squared, minPrefix = NA) %>%
     lteq()
@@ -86,7 +86,7 @@ kableLM <- function(LM, ...) {
       Estimate = num2str(Estimate),
       SE = num2str(SE),
       `$t$` = num2str(`$t$`),
-      `$p$` = p2str(`$p$`)
+      `$p$` = p2str(`$p$`, prefix = "", minPrefix = "< ")
     ) %>%
     kable(align = c('l', 'r', 'r', 'r', 'r', 'c'),
           escape = F,
@@ -198,7 +198,7 @@ kableModelComparison <- function(models, ...) {
         tribble(
           ~var, ~property, ~value,
           colnames(est)[v], '$\\beta$', num2str(as.numeric(est[i, v])),
-          colnames(p)[v], '$p$', p2str(as.numeric(p[i, v]))
+          colnames(p)[v], '$p$', p2str(as.numeric(p[i, v]), prefix = "", minPrefix = "< ")
         )
       )
     }
@@ -210,7 +210,7 @@ kableModelComparison <- function(models, ...) {
         ~var, ~property, ~value,
         '$F$', '$df$', paste0(props$dfn[i], ' / ', props$dfd[i]),
         '$F$', '$F$', num2str(props$f[i]),
-        '$F$', '$p$', p2str(props$pf[i]),
+        '$F$', '$p$', p2str(props$pf[i], prefix = "", minPrefix = "< "),
         '$R^2_{adj}$', '$R^2_{adj}$', prop2str(props$rsq_adj[i], minPrefix = NA)
       )
     )
@@ -232,7 +232,7 @@ kableModelComparison <- function(models, ...) {
           ~var, ~property, ~value,
           '$R^2_{adj}$', '$\\Delta$', prop2str(props$rsq_adj[i] - props$rsq_adj[i - 1], minPrefix = NA),
           '$R^2_{adj}$', '$F$', num2str(props$`F`[i]),
-          '$R^2_{adj}$', '$p$', p2str(props$`Pr(>F)`[i])
+          '$R^2_{adj}$', '$p$', p2str(props$`Pr(>F)`[i], prefix = "", minPrefix = "< ")
         )
       )
     tmp$value <- ifelse(is.na(tmp$value), "", tmp$value)
